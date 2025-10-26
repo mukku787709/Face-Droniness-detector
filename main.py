@@ -104,16 +104,18 @@ while True:
                 mar_list.pop(0)
                 pose_list.pop(0)
 
-            # Calculate fatigue score every second
-            if frame_counter % 30 == 0 and len(ear_list) > 0:
+            # Calculate fatigue score every frame for better logging
+            if len(ear_list) > 0:
                 ear_avg = np.mean(ear_list)
                 mar_avg = np.mean(mar_list)
                 pose_stability = np.mean(pose_list)
                 fatigue_score = calculate_fatigue_score(ear_avg, mar_avg, total_blinks, pose_stability)
+            else:
+                fatigue_score = 0.0
 
-                # Log to CSV
-                timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
-                csv_writer.writerow([timestamp, ear, mar, total_blinks, total_yawns, yaw, pitch, roll, fatigue_score])
+            # Log to CSV every frame
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+            csv_writer.writerow([timestamp, ear if 'ear' in locals() else 0, mar if 'mar' in locals() else 0, total_blinks, total_yawns, yaw if 'yaw' in locals() else 0, pitch if 'pitch' in locals() else 0, roll if 'roll' in locals() else 0, fatigue_score])
 
             # Draw landmarks on frame
             mp_drawing.draw_landmarks(
